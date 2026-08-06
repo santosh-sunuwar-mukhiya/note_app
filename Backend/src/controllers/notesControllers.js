@@ -18,6 +18,9 @@ export async function getNoteById(req, res){
         }
         res.status(200).json(note);
     }catch(error){
+        if (error.name === 'CastError') {
+            return res.status(400).json({ message: 'Invalid Note ID format' });
+        }
         console.error('Error Finding Note', error);
         res.status(500).json({message:'Internal Server Error!'})
     }
