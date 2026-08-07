@@ -10,3 +10,16 @@ __pycache__/
 .venv/
 venv/
 *.sqlite3
+
+# Node.js / Frontend
+node_modules/
+dist/
+build/
+.next/
+npm-debug.log*
+
+# OS & IDE Files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
