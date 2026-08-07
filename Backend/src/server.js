@@ -1,33 +1,53 @@
 import express from "express";
+import cors from "cors";
+import dotenv from "dotenv";
+import path from "path";
+import { fileURLToPath } from "url";
+
 import notesRoutes from "./routes/notesRoutes.js";
 import { connectDB } from "./config/db.js";
-import dotenv from "dotenv";
 import rateLimiter from "./middleware/rateLimiter.js";
-import cors from 'cors';
 
 dotenv.config();
 
 const app = express();
-app.use(cors());
-// Middleware to parse JSON request bodies
-app.use(express.json());
+const PORT = process.env.PORT || 8000;
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
+// middleware
+if (process.env.NODE_ENV !== "production") {
+  app.use(
+    cors({
+      origin: [process.env.FRONTEND_URL || "http://localhost:5173", "http://127.0.0.1:5173"],
+    })
+  );
+}
+app.use(express.json()); // this middleware will parse JSON bodies: req.body
 app.use(rateLimiter);
 
-app.use('/api/notes', notesRoutes);
+// our simple custom middleware
+// app.use((req, res, next) => {
+//   console.log(`Req method is ${req.method} & Req URL is ${req.url}`);
+//   next();
+// });
 
-// Test route to check if the server is running
-app.get('/', (req, res)=>{
-    res.status(200).send('Express Server is Running on my laptop.')
-})
+app.use("/api/notes", notesRoutes);
 
-const PORT = process.env.PORT || 8000;
+app.get("/", (req, res) => {
+  res.send("Note App backend is running.");
+});
 
-connectDB().then(
-    ()=>{
-        app.listen(PORT, ()=>{
-        console.log(`Server is running on port ${PORT}`);
-})
-    }
-);
+if (process.env.NODE_ENV === "production") {
+  const frontendDistPath = path.join(__dirname, "../../Frontend/dist");
+  app.use(express.static(frontendDistPath));
 
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(frontendDistPath, "index.html"));
+  });
+}
+
+connectDB().then(() => {
+  app.listen(PORT, () => {
+    console.log("Server started on PORT:", PORT);
+  });
+});

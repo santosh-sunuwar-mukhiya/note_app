@@ -1,0 +1,24 @@
+{
+  "name": "note_app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "postinstall": "npm install --prefix ./Backend && npm install --prefix ./Frontend",
+    "build": "npm run build --prefix ./Frontend",
+    "start": "npm run start --prefix ./Backend",
+    "dev": "concurrently \"npm run dev --prefix ./Backend\" \"npm run dev --prefix ./Frontend\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/santosh-sunuwar-mukhiya/note_app.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/santosh-sunuwar-mukhiya/note_app/issues"
+  },
+  "homepage": "https://github.com/santosh-sunuwar-mukhiya/note_app#readme"
+}
