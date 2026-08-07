@@ -3,20 +3,16 @@ import notesRoutes from "./routes/notesRoutes.js";
 import { connectDB } from "./config/db.js";
 import dotenv from "dotenv";
 import rateLimiter from "./middleware/rateLimiter.js";
+import cors from 'cors';
 
 dotenv.config();
 
 const app = express();
+app.use(cors());
 // Middleware to parse JSON request bodies
 app.use(express.json());
 
-connectDB();
-
 app.use(rateLimiter);
-app.use((req, rest, next)=>{
-    console.log(`Our Request Method ${req.method} and url is ${req.url}`);
-    next();
-})
 
 app.use('/api/notes', notesRoutes);
 
@@ -26,7 +22,12 @@ app.get('/', (req, res)=>{
 })
 
 const PORT = process.env.PORT || 8000;
-// Start the server
-app.listen(PORT, ()=>{
-    console.log(`Server is running on port ${PORT}`);
+
+connectDB().then(
+    ()=>{
+        app.listen(PORT, ()=>{
+        console.log(`Server is running on port ${PORT}`);
 })
+    }
+);
+
